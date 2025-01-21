@@ -85,6 +85,7 @@ def display_conversation(transcript):
             margin: 5px 0;
             border-radius: 15px;
             max-width: 80%;
+            color: black;
         }
         .therapist {
             background-color: #e3f2fd;

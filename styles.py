@@ -51,5 +51,38 @@ CUSTOM_CSS = """
         color: #1a1a1a; 
         font-weight: 500; 
     }
+
+    /* Chat-related styles */
+    .chat-container {
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #f5f5f5;
+        margin: 10px 0;
+    }
+    
+    .message {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 15px;
+        max-width: 80%;
+        color: black;
+    }
+    
+    .therapist {
+        background-color: #e3f2fd;
+        margin-right: 20%;
+    }
+    
+    .client {
+        background-color: #f0f4c3;
+        margin-left: 20%;
+    }
+    
+    .observation {
+        font-style: italic;
+        color: #666;
+        font-size: 0.9em;
+        margin: 2px 0;
+    }
     </style>
 """

@@ -63,8 +63,8 @@ def render_transcript_section():
     
     transcript_choice = st.radio(
         "Choose transcript source:",
-        ["Load Example", "Enter New"],
-        help="Select an example transcript or input your own"
+        ["Load Example", "Enter New", "Upload File"],
+        help="Select an example transcript, input your own, or upload a file"
     )
     
     if transcript_choice == "Load Example":
@@ -74,6 +74,20 @@ def render_transcript_section():
             help="Choose from our sample transcripts"
         )
         transcript = TRANSCRIPTS[selected_transcript]
+    elif transcript_choice == "Upload File":
+        uploaded_file = st.file_uploader(
+            "Upload transcript file",
+            type=["txt"],
+            help="Upload a text file containing the session transcript"
+        )
+        if uploaded_file is not None:
+            try:
+                transcript = uploaded_file.getvalue().decode("utf-8")
+            except Exception as e:
+                st.error("Error reading file. Please ensure it's a valid text file.")
+                transcript = None
+        else:
+            transcript = None
     else:
         transcript = st.text_area(
             "Enter session transcript:",

@@ -5,17 +5,24 @@ from templates import PROMPTS, TRANSCRIPTS
 
 def render_prompt_section():
     """Render prompt selection and input section"""
-    st.markdown("#### Select Prompt Template")
+    st.markdown("### 1️⃣ Configure Summary Generation")
     
-    use_custom_api = st.checkbox("Use Custom API for Summary Generation")
+    # Simplified API choice with better explanation
+    generation_method = st.radio(
+        "Choose how to generate the summary:",
+        ["OpenAI API", "Custom API"],
+        help="Select whether to use OpenAI's API or your own custom API endpoint"
+    )
+    
     api_config = None
-    
-    if use_custom_api:
-        with st.expander("API Configuration"):
-            api_url = st.text_input("API Endpoint URL")
+    if generation_method == "Custom API":
+        with st.expander("Custom API Configuration ⚙️"):
+            st.info("Configure your custom API endpoint for summary generation")
+            api_url = st.text_input("API Endpoint URL", placeholder="https://your-api.com/summarize")
             bearer_token = st.text_input("Bearer Token", type="password")
             api_body = st.text_area(
-                "Enter API request body (JSON):",
+                "Request Body Template (JSON):",
+                placeholder='{\n    "text": "<transcript>",\n    "options": {}\n}',
                 height=150
             )
             api_config = {
@@ -25,23 +32,26 @@ def render_prompt_section():
             }
         prompt = None
     else:
-        # Only show OpenAI-specific prompt options when not using custom API
+        st.markdown("#### Prompt Selection")
         prompt_choice = st.radio(
-            "Choose a prompt template or create custom:",
-            ["Select Predefined", "Create Custom"]
+            "Choose your prompt:",
+            ["Use Template", "Write Custom"],
+            help="Select a pre-defined template or write your own custom prompt"
         )
         
-        if prompt_choice == "Select Predefined":
+        if prompt_choice == "Use Template":
             selected_prompt = st.selectbox(
-                "Select a predefined prompt:",
-                list(PROMPTS.keys())
+                "Select a template:",
+                list(PROMPTS.keys()),
+                help="Choose from our curated prompt templates"
             )
             prompt = PROMPTS[selected_prompt]
-            st.markdown("##### Selected Prompt:")
-            st.markdown(f"""<div class="prompt-box">{prompt}</div>""", unsafe_allow_html=True)
+            with st.expander("View Selected Prompt"):
+                st.markdown(f"""<div class="prompt-box">{prompt}</div>""", unsafe_allow_html=True)
         else:
             prompt = st.text_area(
-                "Enter custom prompt:",
+                "Write your custom prompt:",
+                placeholder="Enter instructions for the AI summarizer...",
                 height=150
             )
     
@@ -49,22 +59,25 @@ def render_prompt_section():
 
 def render_transcript_section():
     """Render transcript selection and input section"""
-    st.markdown("#### Session Transcript")
+    st.markdown("### 2️⃣ Provide Session Transcript")
+    
     transcript_choice = st.radio(
-        "Choose a transcript source:",
-        ["Select Example", "Input New"]
+        "Choose transcript source:",
+        ["Load Example", "Enter New"],
+        help="Select an example transcript or input your own"
     )
     
-    if transcript_choice == "Select Example":
+    if transcript_choice == "Load Example":
         selected_transcript = st.selectbox(
-            "Select an example transcript:",
-            list(TRANSCRIPTS.keys())
+            "Select an example:",
+            list(TRANSCRIPTS.keys()),
+            help="Choose from our sample transcripts"
         )
         transcript = TRANSCRIPTS[selected_transcript]
-        # Remove preview - transcript will only be shown in results
     else:
         transcript = st.text_area(
-            "Enter or paste the session transcript:",
+            "Enter session transcript:",
+            placeholder="Paste your session transcript here...",
             height=200
         )
     return transcript

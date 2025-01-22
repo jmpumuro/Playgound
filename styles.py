@@ -1,63 +1,58 @@
 CUSTOM_CSS = """
     <style>
-    .main { 
-        color: #1a1a1a; 
+    /* Base styles with better contrast */
+    .main, label, .stMarkdown p, .stMarkdown div, 
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > div,
+    .stRadio > div > label,
+    .stExpander > div > div > div > div > label { 
+        color: white !important; 
     }
     
-    .section-container {
-        background-color: white;
-        padding: 20px;
+    /* Input fields */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea {
+        background-color: #2b2b2b !important;
+        border: 1px solid #404040 !important;
+        color: white !important;
+    }
+    
+    /* Boxes with dark backgrounds */
+    .prompt-box, .transcript-box, .summary-box {
+        background-color: #2b2b2b;
+        border: 1px solid #404040;
+        color: white;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+    }
+    
+    /* Section headers */
+    h3 {
+        padding: 10px;
+        background: #2b2b2b;
+        border-left: 4px solid #ff4b4b;
+        margin: 20px 0 !important;
+        color: white !important;
+    }
+    
+    /* Radio and select containers */
+    .stRadio > div {
+        background-color: #2b2b2b;
+        padding: 15px;
         border-radius: 8px;
-        margin-bottom: 20px;
-        border: 1px solid #dadce0;
-    }
-    
-    .prompt-box {
-        background-color: #ffffff;
-        border: 2px solid #4a90e2;
-        color: #1a1a1a;
-        padding: 15px;
-        border-radius: 4px;
         margin: 10px 0;
+        border: 1px solid #404040;
     }
     
-    .transcript-box {
-        background-color: #ffffff;
-        border: 2px solid #dadce0;
-        color: #1a1a1a;
-        padding: 15px;
-        border-radius: 4px;
-        margin: 10px 0;
-        max-height: 400px;
-        overflow-y: auto;
-    }
-    
-    .summary-box {
-        background-color: #f8f9fa;
-        border: 2px solid #34a853;
-        color: #1a1a1a;
-        padding: 15px;
-        border-radius: 4px;
-        margin: 10px 0;
-    }
-    
-    .header { 
-        color: #1a1a1a; 
-        font-weight: bold; 
-        margin: 15px 0; 
-    }
-    
-    label { 
-        color: #1a1a1a; 
-        font-weight: 500; 
-    }
-
-    /* Chat-related styles */
+    /* Chat interface */
     .chat-container {
         padding: 10px;
         border-radius: 10px;
-        background-color: #f5f5f5;
+        background-color: #2b2b2b;
         margin: 10px 0;
+        border: 1px solid #404040;
     }
     
     .message {
@@ -69,20 +64,55 @@ CUSTOM_CSS = """
     }
     
     .therapist {
-        background-color: #e3f2fd;
+        background-color: #ff4b4b;
         margin-right: 20%;
+        color: white;
     }
     
     .client {
-        background-color: #f0f4c3;
+        background-color: #4b4b4b;
         margin-left: 20%;
+        color: white;
     }
     
     .observation {
         font-style: italic;
-        color: #666;
+        color: #cccccc;
         font-size: 0.9em;
         margin: 2px 0;
+    }
+    
+    /* Buttons */
+    .stButton > button {
+        width: 100%;
+        padding: 10px !important;
+        font-weight: 500;
+        background-color: #ff4b4b !important;
+        color: white !important;
+    }
+    
+    /* Select boxes */
+    .stSelectbox > div > div {
+        background-color: #2b2b2b !important;
+        border: 1px solid #404040 !important;
+    }
+    
+    /* Info messages */
+    .stAlert > div {
+        color: white !important;
+        background-color: #2b2b2b !important;
+        border: 1px solid #404040 !important;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background-color: #2b2b2b !important;
+        color: white !important;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #2b2b2b !important;
+        color: white !important;
     }
     </style>
 """

@@ -180,8 +180,8 @@ def render_results(transcript, summary, api_config=None):
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.markdown("#### Original Transcript")
-        display_conversation(transcript) 
+        with st.expander("Original Transcript", expanded=True):
+            display_conversation(transcript) 
     
     with col2:
         st.markdown("#### Generated Summary")

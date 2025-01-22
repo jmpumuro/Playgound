@@ -24,10 +24,10 @@ def generate_summary(client, prompt, transcript):
             return None
             
         # Log the request parameters (for debugging)
-        st.write("Debug info:")
+        ''' st.write("Debug info:")
         st.write(f"Model: {AZURE_CONFIG['model']}")
         st.write(f"Prompt length: {len(prompt)}")
-        st.write(f"Transcript length: {len(transcript)}")
+        st.write(f"Transcript length: {len(transcript)}") '''
         
         response = client.chat.completions.create(
             model=AZURE_CONFIG["model"],

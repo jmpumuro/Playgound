@@ -5,7 +5,7 @@ from templates import PROMPTS, TRANSCRIPTS
 
 def render_prompt_section():
     """Render prompt selection and input section"""
-    st.markdown("### 1️⃣ Configure Summary Generation")
+    st.markdown("###  Configure Summary Generation")
     
     # Simplified API choice with better explanation
     generation_method = st.radio(
@@ -59,7 +59,7 @@ def render_prompt_section():
 
 def render_transcript_section():
     """Render transcript selection and input section"""
-    st.markdown("### 2️⃣ Provide Session Transcript")
+    st.markdown("###  Provide Session Transcript")
     
     transcript_choice = st.radio(
         "Choose transcript source:",
@@ -181,7 +181,7 @@ def render_results(transcript, summary, api_config=None):
     
     with col1:
         st.markdown("#### Original Transcript")
-        display_conversation(transcript)
+        display_conversation(transcript) 
     
     with col2:
         st.markdown("#### Generated Summary")

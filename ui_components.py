@@ -7,55 +7,30 @@ def render_prompt_section():
     """Render prompt selection and input section"""
     st.markdown("###  Configure Summary Generation")
     
-    # Simplified API choice with better explanation
-    generation_method = st.radio(
-        "Choose how to generate the summary:",
-        ["OpenAI API", "Custom API"],
-        help="Select whether to use OpenAI's API or your own custom API endpoint"
+    st.markdown("#### Prompt Selection")
+    prompt_choice = st.radio(
+        "Choose your prompt:",
+        ["Use Template", "Write Custom"],
+        help="Select a pre-defined template or write your own custom prompt"
     )
     
-    api_config = None
-    if generation_method == "Custom API":
-        with st.expander("Custom API Configuration ⚙️"):
-            st.info("Configure your custom API endpoint for summary generation")
-            api_url = st.text_input("API Endpoint URL", placeholder="https://your-api.com/summarize")
-            bearer_token = st.text_input("Bearer Token", type="password")
-            api_body = st.text_area(
-                "Request Body Template (JSON):",
-                placeholder='{\n    "text": "<transcript>",\n    "options": {}\n}',
-                height=150
-            )
-            api_config = {
-                "url": api_url,
-                "token": bearer_token,
-                "body": api_body
-            }
-        prompt = None
-    else:
-        st.markdown("#### Prompt Selection")
-        prompt_choice = st.radio(
-            "Choose your prompt:",
-            ["Use Template", "Write Custom"],
-            help="Select a pre-defined template or write your own custom prompt"
+    if prompt_choice == "Use Template":
+        selected_prompt = st.selectbox(
+            "Select a template:",
+            list(PROMPTS.keys()),
+            help="Choose from our curated prompt templates"
         )
-        
-        if prompt_choice == "Use Template":
-            selected_prompt = st.selectbox(
-                "Select a template:",
-                list(PROMPTS.keys()),
-                help="Choose from our curated prompt templates"
-            )
-            prompt = PROMPTS[selected_prompt]
-            with st.expander("View Selected Prompt"):
-                st.markdown(f"""<div class="prompt-box">{prompt}</div>""", unsafe_allow_html=True)
-        else:
-            prompt = st.text_area(
-                "Write your custom prompt:",
-                placeholder="Enter instructions for the AI summarizer...",
-                height=150
-            )
+        prompt = PROMPTS[selected_prompt]
+        with st.expander("View Selected Prompt"):
+            st.markdown(f"""<div class="prompt-box">{prompt}</div>""", unsafe_allow_html=True)
+    else:
+        prompt = st.text_area(
+            "Write your custom prompt:",
+            placeholder="Enter instructions for the AI summarizer...",
+            height=150
+        )
     
-    return prompt, api_config
+    return prompt, None  # Return None for api_config since we're not using custom API
 
 def render_transcript_section():
     """Render transcript selection and input section"""
@@ -180,13 +155,16 @@ def render_results(transcript, summary, api_config=None):
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        with st.expander("Original Transcript", expanded=True):
-            display_conversation(transcript) 
+        tab1, tab2 = st.tabs(["Conversation View", "Raw Transcript"])
+        
+        with tab1:
+            display_conversation(transcript)
+            
+        with tab2:
+            st.text_area("Raw Transcript", value=transcript, height=400, disabled=True)
     
     with col2:
         st.markdown("#### Generated Summary")
-        if api_config:
-            st.info("Using custom API for summary generation")
         
         if summary is None or isinstance(summary, dict) and 'error' in summary:
             st.error("Unable to generate summary. Please try again or contact support if the issue persists.")

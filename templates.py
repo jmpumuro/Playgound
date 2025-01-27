@@ -1,6 +1,17 @@
 # Predefined prompts
 PROMPTS = {
-    "Comprehensive Clinical Summary": """You are a AI mental healthcare assistant for Dr. Tania (she/her).
+    "default": """You are a AI mental healthcare assistant for Dr. Tania (she/her).
+Provide a 2-3 sentence overview of the therapy session between Dr. Tania and the client. The overview should be written in the second person, speaking to the client from the transcript. Avoid 1st person terminology by referring to the provider by name and/or pronouns and to the client as "you".
+
+- The first sentence should list the high-level topics that were discussed
+- The second sentence should provide additional context or details to what was discussed, emphasizing recurring themes or key details that were shared.
+- The third sentence should provide the client with any insights the therapist provided during the session. If the therapist did not provide any key insights or overall recommendations, omit this sentence entirely.
+
+NEVER assume what the client and/or the provider think about something unless they specifically said it themselves.
+
+Keep the overview brief, friendly, and non-clinical. Use careful wording around difficult topics that may have been discussed to avoid coming across as harsh or insensitive.""",
+
+    "otto": """You are a AI mental healthcare assistant for Dr. Tania (she/her).
 Provide a 2-3 sentence overview of the therapy session between Dr. Tania and the client. The overview should be written in the second person, speaking to the client from the transcript. Avoid 1st person terminology by referring to the provider by name and/or pronouns and to the client as "you".
 
 - The first sentence should list the high-level topics that were discussed
@@ -164,6 +175,31 @@ Then, please provide a risk-focused assessment addressing:
 
 # Predefined transcripts
 TRANSCRIPTS = {
+    "default": """
+Provider: Hi, Alex. It's good to see you again. How have you been feeling since our last session?
+Client: Thanks, Dr. James. It's been… a mixed bag, honestly. I've been staying clean, but some days, it feels like the weight of everything is just too much.
+Provider: Staying clean is a significant accomplishment, Alex. You should be proud of that. It sounds like the emotional weight has been heavy, though. Can you tell me more about what's been making those days so tough?
+Client: It's hard to put into words. Sometimes, it's just this overwhelming guilt about my past—things I've done, people I've hurt. And other times, it's this voice in my head telling me it'd be easier if I weren't here.
+Provider: Thank you for sharing that with me. It takes courage to talk about those thoughts. When you hear that voice, what do you usually do?
+Client: I try to ignore it. I tell myself it's not true. But ignoring it doesn't always make it go away.
+Provider: That's a really important insight. Ignoring those thoughts might make them quieter temporarily, but they can linger if we don't address them directly. What do you think we could do together to help you confront and challenge that voice?
+Client: I don't know. Part of me doesn't want to confront it because it feels… like it's right. Like I've messed up too much to deserve anything good now.
+Provider: That's a painful belief to carry, Alex. Let's take a moment to unpack that. Can you think of times in your life where you've done something you're proud of, no matter how small?
+Client: Hmm. Maybe sticking with treatment? I never thought I'd be able to stop using, but it's been six months now.
+Provider: That's an incredible achievement, and it shows your strength and resilience. It's proof that you're capable of change, even when it feels impossible. What would it be like if we used that same strength to start forgiving yourself for the past?
+Client: I don't know if I can. It's hard to even think about forgiving myself. What I did hurt people.
+Provider: Forgiving yourself doesn't mean excusing your actions or forgetting what happened. It means acknowledging your mistakes, taking responsibility, and allowing yourself the chance to grow beyond them. What would taking a small step toward that look like for you?
+Client: Maybe… I don't know, writing a letter to myself? Something I don't have to share with anyone. Just to get it out.
+Provider: That's a beautiful idea, Alex. A letter can be a safe space to express those feelings and start to challenge that inner voice. Would you like to make that your goal for the week?
+Client: I think I could try that. I'm not sure how it'll go, but I'll give it a shot.
+Provider: That's all I ask. Taking even small steps like this is progress. Before we wrap up, let's talk about your support system. Who can you reach out to when you're feeling overwhelmed?
+Client: My sister's been pretty supportive. And there's my sponsor from the program. They're both good people to talk to.
+Provider: That's great to hear. Remember, you don't have to face this alone. Can we also agree on a safety plan, just in case those suicidal thoughts become too strong?
+Client: Yeah, I think that's a good idea.
+Provider: Excellent. Let's write down some steps together, including who to call and where to go if you're in crisis. You're not alone in this, Alex, and I want you to know I'm here to support you every step of the way.
+Client: Thanks, Dr. James. I appreciate it.
+Provider: You're very welcome. You've done some important work today, Alex. I'll see you next week, and in the meantime, take care of yourself.""",
+
     "Initial Anxiety Session": """[Initial session transcript - Work-related anxiety]
 Provider: Hello, and welcome. How are you feeling about being here today?
 Client: [speaking quietly, fidgeting with hands] Honestly, pretty nervous. I've never done therapy before, but my anxiety at work has gotten unbearable.

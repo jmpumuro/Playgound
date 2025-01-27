@@ -53,6 +53,8 @@ CUSTOM_CSS = """
         background-color: #2b2b2b;
         margin: 10px 0;
         border: 1px solid #404040;
+        max-height: 500px;  /* Set maximum height to match raw transcript */
+        overflow-y: auto;  /* Enable vertical scrolling */
     }
     
     .message {

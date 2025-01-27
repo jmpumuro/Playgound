@@ -73,81 +73,76 @@ def render_transcript_section():
 
 def display_conversation(transcript):
     """Display conversation in a chat-like interface"""
-    chat_container = st.container()
-    with chat_container:
-        st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-        
-        # Split transcript into lines and process each line
-        lines = transcript.strip().split('\n')
-        speakers = set()
-        conversation_pairs = []
-        current_speaker = None
-        
-        # First pass: Identify unique speakers and conversation structure
-        for line in lines:
-            line = line.strip()
-            if not line or (line.startswith('[') and line.endswith(']')):
-                continue
-                
-            # Check if line starts with a potential speaker indicator
-            colon_split = line.split(':', 1)
-            if len(colon_split) == 2:
-                potential_speaker = colon_split[0].strip()
-                # Add to speakers if it looks like a speaker (short name/title)
-                if len(potential_speaker.split()) <= 3:
-                    speakers.add(potential_speaker.lower())
-        
-        # Second pass: Process the conversation
-        buffer = []
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-                
-            # Handle observations
-            if line.startswith('[') and line.endswith(']'):
-                st.markdown(f'<div class="observation">{line}</div>', unsafe_allow_html=True)
-                continue
+    # Create a container div with custom HTML/CSS
+    html_content = ['<div class="chat-container">']
+    
+    # Split transcript into lines and process each line
+    lines = transcript.strip().split('\n')
+    speakers = set()
+    current_speaker = None
+    
+    # First pass: Identify unique speakers
+    for line in lines:
+        line = line.strip()
+        if not line or (line.startswith('[') and line.endswith(']')):
+            continue
+        colon_split = line.split(':', 1)
+        if len(colon_split) == 2:
+            potential_speaker = colon_split[0].strip()
+            if len(potential_speaker.split()) <= 3:
+                speakers.add(potential_speaker.lower())
+    
+    # Second pass: Process the conversation
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
             
-            message = line
-            speaker = None
-            
-            # Check if line starts with known speaker
-            colon_split = line.split(':', 1)
-            if len(colon_split) == 2 and colon_split[0].strip().lower() in speakers:
-                speaker = colon_split[0].strip().lower()
-                message = colon_split[1].strip()
+        # Handle observations
+        if line.startswith('[') and line.endswith(']'):
+            html_content.append(f'<div class="observation">{line}</div>')
+            continue
+        
+        message = line
+        speaker = None
+        
+        # Check if line starts with known speaker
+        colon_split = line.split(':', 1)
+        if len(colon_split) == 2 and colon_split[0].strip().lower() in speakers:
+            speaker = colon_split[0].strip().lower()
+            message = colon_split[1].strip()
+        else:
+            if not current_speaker:
+                speaker = list(speakers)[0] if speakers else "speaker1"
             else:
-                # If no explicit speaker, determine based on conversation flow
-                if not current_speaker:
-                    # First speaker is typically the therapist
-                    speaker = list(speakers)[0] if speakers else "speaker1"
-                else:
-                    # Alternate speakers if no explicit indication
-                    speaker_list = list(speakers) if speakers else ["speaker1", "speaker2"]
-                    current_idx = speaker_list.index(current_speaker)
-                    speaker = speaker_list[(current_idx + 1) % len(speaker_list)]
-            
-            # Extract any inline observations
-            observation = ""
-            if '[' in message and ']' in message:
-                start = message.find('[')
-                end = message.find(']') + 1
-                observation = message[start:end]
-                message = message.replace(observation, '').strip()
-                if observation:
-                    st.markdown(f'<div class="observation">{observation}</div>', unsafe_allow_html=True)
-            
-            # Determine CSS class (first speaker is therapist, second is client)
-            speaker_list = list(speakers) if speakers else ["speaker1", "speaker2"]
-            css_class = "therapist" if speaker == speaker_list[0] else "client"
-            
-            # Display the message
-            st.markdown(f'<div class="message {css_class}">{message}</div>', unsafe_allow_html=True)
-            
-            current_speaker = speaker
-            
-        st.markdown('</div>', unsafe_allow_html=True)
+                speaker_list = list(speakers) if speakers else ["speaker1", "speaker2"]
+                current_idx = speaker_list.index(current_speaker)
+                speaker = speaker_list[(current_idx + 1) % len(speaker_list)]
+        
+        # Extract any inline observations
+        observation = ""
+        if '[' in message and ']' in message:
+            start = message.find('[')
+            end = message.find(']') + 1
+            observation = message[start:end]
+            message = message.replace(observation, '').strip()
+            if observation:
+                html_content.append(f'<div class="observation">{observation}</div>')
+        
+        # Determine CSS class
+        speaker_list = list(speakers) if speakers else ["speaker1", "speaker2"]
+        css_class = "therapist" if speaker == speaker_list[0] else "client"
+        
+        # Add message to HTML content
+        html_content.append(f'<div class="message {css_class}">{message}</div>')
+        
+        current_speaker = speaker
+    
+    # Close the container div
+    html_content.append('</div>')
+    
+    # Render all content at once
+    st.markdown('\n'.join(html_content), unsafe_allow_html=True)
 
 def render_results(transcript, summary, api_config=None):
     """Render analysis results"""

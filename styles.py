@@ -62,7 +62,6 @@ CUSTOM_CSS = """
         background-color: #2b2b2b !important;
         border: 1px solid #404040 !important;
         border-radius: 8px !important;
-        padding: 8px !important;
         margin-top: 10px !important;
     }
     

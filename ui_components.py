@@ -181,7 +181,7 @@ def render_results(transcript, summary, api_config=None):
 
 def create_reflection_entry(token, mood):
     """Create a new reflection entry"""
-    url = "https://conciergesvc-trunk.sondermind.biz/api/v1/reflection/entries"
+    url = "https://conciergesvc-bowie.sondermind.biz/api/v1/reflection/entries"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"  # Added content type header
@@ -203,7 +203,7 @@ def create_reflection_entry(token, mood):
 
 def start_reflection_session(token):
     """Start a new reflection session"""
-    url = "https://conciergesvc-trunk.sondermind.biz/api/v1/reflection/sessions/start"
+    url = "https://conciergesvc-bowie.sondermind.biz/api/v1/reflection/sessions/start"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
@@ -239,7 +239,7 @@ def start_reflection_session(token):
 
 def send_chat_message(token, session_id, message):
     """Send a message to the chat session"""
-    url = f"https://conciergesvc-trunk.sondermind.biz/api/v1/reflection/sessions/{session_id}/messages"
+    url = f"https://conciergesvc-bowie.sondermind.biz/api/v1/reflection/sessions/{session_id}/messages"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
@@ -286,7 +286,7 @@ def render_reflection_section(client):
                     basic = base64.b64encode(f"{uid}:{secret}".encode()).decode()
                     
                     # Make authentication request
-                    url = "https://authsvc-trunk.sondermind.biz/oauth/token"
+                    url = "https://authsvc-bowie.sondermind.biz/oauth/token"
                     headers = {"Authorization": f"Basic {basic}"}
                     payload = {
                         "grant_type": "password",

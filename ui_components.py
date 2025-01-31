@@ -309,11 +309,14 @@ def render_reflection_section(client):
     header_col1, header_col2, header_col3 = st.columns([5, 1, 1])
     with header_col2:
         if st.button("Restart Chat"):
-            # Remove storing active tab since we want to stay on current tab
+            # Preserve active tab while clearing chat state
+            active_tab = st.session_state.get('active_tab')  # Get current active tab
             if "reflection_session" in st.session_state:
                 del st.session_state.reflection_session
             if "chat_messages" in st.session_state:
                 del st.session_state.chat_messages
+            if active_tab:  # Restore active tab if it existed
+                st.session_state.active_tab = active_tab
             st.rerun()
     with header_col3:
         if st.button("Logout"):

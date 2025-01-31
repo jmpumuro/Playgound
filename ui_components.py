@@ -179,17 +179,6 @@ def render_results(transcript, summary, api_config=None):
                 st.session_state.clear()
                 st.rerun()
 
-def mock_chat_api(message):
-    """Mock conversation API - replace with actual API integration"""
-    responses = [
-        "How does that make you feel?",
-        "Can you tell me more about that?",
-        "That sounds challenging. What helped you get through it?",
-        "I hear you. What thoughts come up when you reflect on that?",
-    ]
-    import random
-    return random.choice(responses)
-
 def create_reflection_entry(token, mood):
     """Create a new reflection entry"""
     url = "https://conciergesvc-trunk.sondermind.biz/api/v1/reflection/entries"
@@ -291,9 +280,9 @@ def render_reflection_section(client):
         if st.button("Login"):
             with st.spinner("Authenticating..."):
                 try:
-                    # Authentication credentials
-                    uid = 'PLks06-ocG2xXiPtzM_CzfIOHOiWWvxO0PhPoMSRMZk'
-                    secret = '987HQHTP_lOUGI3-6kboGW3EHZlMpoLwFTqZ13lqZCQ'
+                    # Authentication credentials from secrets
+                    uid = st.secrets["AUTH_UID"]
+                    secret = st.secrets["AUTH_SECRET"]
                     basic = base64.b64encode(f"{uid}:{secret}".encode()).decode()
                     
                     # Make authentication request

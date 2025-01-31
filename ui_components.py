@@ -354,9 +354,8 @@ def render_reflection_section(client):
         
         # Initialize session in session state if not exists
         if "reflection_session" not in st.session_state:
-            # Create entry and start session
             with st.spinner("Initializing chat..."):
-                entry = create_reflection_entry(st.session_state.auth_token, 0.0)  # Default mood to neutral
+                entry = create_reflection_entry(st.session_state.auth_token, 0.0)
                 if entry is None:
                     st.error("Failed to create reflection entry")
                     return
@@ -366,11 +365,10 @@ def render_reflection_section(client):
                     st.error("Failed to start reflection session")
                     return
                 
-                # Extract session ID from nested data structure
                 session_id = session.get('id')
                 if not session_id:
                     st.error("No session ID received in response data")
-                    st.error(f"Response data: {session}")  # Debug info
+                    st.error(f"Response data: {session}")
                     return
                 
                 st.session_state.reflection_session = session_id
@@ -378,50 +376,51 @@ def render_reflection_section(client):
                     "role": "assistant",
                     "content": "Hi, I'm Otto. I'm here to help you reflect on your day. How are you feeling?"
                 }]
+                st.rerun() 
 
         # Display chat messages
         messages_container = st.container()
         
-        # Display existing messages first
+        # Display existing messages
         with messages_container:
             for message in st.session_state.chat_messages:
                 with st.chat_message(message["role"]):
                     st.markdown(message["content"])
 
-        # Place the chat input below the messages container
-        prompt = st.chat_input("Type your message here...")
-
-        # Handle new messages
-        if prompt:
-            # Display user message immediately
-            with messages_container:
-                with st.chat_message("user"):
-                    st.markdown(prompt)
+        # Only show chat input if session is initialized
+        if "reflection_session" in st.session_state:
+            prompt = st.chat_input("Type your message here...")
             
-            # Add user message to history
-            st.session_state.chat_messages.append({"role": "user", "content": prompt})
-            
-            # Get and display assistant response
-            with messages_container:
-                with st.chat_message("assistant"):
-                    response_placeholder = st.empty()
-                    with response_placeholder:
-                        with st.spinner(""):
-                            response = send_chat_message(
-                                st.session_state.auth_token,
-                                st.session_state.reflection_session,
-                                prompt
-                            )
-                    
-                    if isinstance(response, dict) and 'm' in response:
-                        assistant_message = response['m']
-                        response_placeholder.markdown(assistant_message)
-                        st.session_state.chat_messages.append({
-                            "role": "assistant",
-                            "content": assistant_message
-                        })
-            
-            st.rerun()
+            if prompt:
+                # Display user message immediately
+                with messages_container:
+                    with st.chat_message("user"):
+                        st.markdown(prompt)
+                
+                # Add user message to history
+                st.session_state.chat_messages.append({"role": "user", "content": prompt})
+                
+                # Get and display assistant response
+                with messages_container:
+                    with st.chat_message("assistant"):
+                        response_placeholder = st.empty()
+                        with response_placeholder:
+                            with st.spinner(""):
+                                response = send_chat_message(
+                                    st.session_state.auth_token,
+                                    st.session_state.reflection_session,
+                                    prompt
+                                )
+                        
+                        if isinstance(response, dict) and 'm' in response:
+                            assistant_message = response['m']
+                            response_placeholder.markdown(assistant_message)
+                            st.session_state.chat_messages.append({
+                                "role": "assistant",
+                                "content": assistant_message
+                            })
+                
+                st.rerun()
         
         # Update the Generate Summary button section
         if st.button("Generate Reflection Summary", type="primary"):

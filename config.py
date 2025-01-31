@@ -2,7 +2,7 @@ import streamlit as st
 
 # Page configuration
 PAGE_CONFIG = {
-    "page_title": "Session Summary",
+    "page_title": "PLAYGROUND",
     "page_icon": "📝",
     "layout": "wide"
 }

@@ -6,6 +6,7 @@ from ui_components import (
     render_prompt_section,
     render_transcript_section,
     render_results,
+    render_reflection_section,
 )
 
 def main():
@@ -13,7 +14,7 @@ def main():
     st.set_page_config(**PAGE_CONFIG)
     st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
     
-    st.title("Session Summary")
+    st.title("PLAYGROUND")
     
     # Initialize Azure OpenAI client
     client = init_azure_openai()
@@ -21,36 +22,42 @@ def main():
         st.error("Please configure Azure OpenAI credentials in streamlit secrets.")
         return
     
-    # Main content
-    with st.container():
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            prompt, api_config = render_prompt_section()
-        
-        with col2:
-            transcript = render_transcript_section()
+    # Create main tabs
+    summary_tab, reflection_tab = st.tabs(["Session Summary", "Daily Reflection"])
     
-    # Generate Summary button
-    if st.button("Generate Summary", type="primary"):
-        if not transcript:
-            st.warning("Please enter or select a transcript to analyze.")
-            return
-        
-        if not prompt and not api_config:
-            st.warning("Please select or enter a prompt template.")
-            return
+    with summary_tab:
+        # Main content
+        with st.container():
+            col1, col2 = st.columns(2)
             
-        with st.spinner("Generating summary..."):
-            if api_config:
-                st.error("Custom API implementation not yet available")
+            with col1:
+                prompt, api_config = render_prompt_section()
+            
+            with col2:
+                transcript = render_transcript_section()
+        
+        # Generate Summary button
+        if st.button("Generate Summary", type="primary"):
+            if not transcript:
+                st.warning("Please enter or select a transcript to analyze.")
                 return
-            else:
-                summary = generate_summary(client, prompt, transcript)
             
-            if summary:
-                render_results(transcript, summary, api_config)
+            if not prompt and not api_config:
+                st.warning("Please select or enter a prompt template.")
+                return
+                
+            with st.spinner("Generating summary..."):
+                if api_config:
+                    st.error("Custom API implementation not yet available")
+                    return
+                else:
+                    summary = generate_summary(client, prompt, transcript)
+                
+                if summary:
+                    render_results(transcript, summary, api_config)
     
+    with reflection_tab:
+        render_reflection_section(client)
 
 if __name__ == "__main__":
     main()

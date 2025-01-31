@@ -53,8 +53,42 @@ CUSTOM_CSS = """
         background-color: #2b2b2b;
         margin: 10px 0;
         border: 1px solid #404040;
-        max-height: 500px;  /* Set maximum height to match raw transcript */
-        overflow-y: auto;  /* Enable vertical scrolling */
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    /* Chat input styling */
+    [data-testid="stChatInput"] {
+        background-color: #2b2b2b !important;
+        border: 1px solid #404040 !important;
+        border-radius: 8px !important;
+        padding: 8px !important;
+        margin-top: 10px !important;
+    }
+    
+    [data-testid="stChatInput"] > div {
+        background-color: transparent !important;
+    }
+    
+    [data-testid="stChatInput"] input {
+        color: white !important;
+    }
+    
+    /* Chat message styling */
+    [data-testid="stChatMessage"] {
+        background-color: #363636 !important;
+        border: 1px solid #404040 !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+        margin: 8px 0 !important;
+    }
+    
+    /* User and assistant icons */
+    [data-testid="stChatMessage"] [data-testid="userAvatar"],
+    [data-testid="stChatMessage"] [data-testid="assistantAvatar"] {
+        background-color: #ff4b4b !important;
+        padding: 8px !important;
+        border-radius: 50% !important;
     }
     
     .message {

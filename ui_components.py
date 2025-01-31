@@ -174,15 +174,10 @@ def render_results(transcript, summary, api_config=None):
                 </div>
             """, unsafe_allow_html=True)
             
-            st.markdown("#### Feedback")
-            quality_rating = st.select_slider(
-                "Summary Quality",
-                options=["Poor", "Fair", "Good", "Very Good", "Excellent"],
-                value="Good"
-            )
-            
-            if st.button("Save Analysis"):
-                st.success("Analysis saved successfully!")
+            # Replace feedback section with reset button
+            if st.button("Reset", type="primary"):
+                st.session_state.clear()
+                st.rerun()
 
 def mock_chat_api(message):
     """Mock conversation API - replace with actual API integration"""

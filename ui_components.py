@@ -5,6 +5,7 @@ from templates import PROMPTS, TRANSCRIPTS
 import base64
 import requests
 import json
+from reflection_template import REFLECTION_PROMPTS
 
 
 def render_prompt_section():
@@ -333,9 +334,14 @@ def render_reflection_section(client):
     if reflection_mode == "Chat with Otto":
         # Add prompt configuration
         with st.expander("Configure Summary Generation"):
+            prompt_type = st.selectbox(
+                "Select summary template:",
+                list(REFLECTION_PROMPTS.keys()),
+                index=0
+            )
             summary_prompt = st.text_area(
                 "Customize summary generation prompt:",
-                value="Based on the conversation, please provide:\n1. A brief summary of the reflection\n2. Key themes and insights\n3. Assessed mood valence (-1 to 1)",
+                value=REFLECTION_PROMPTS[prompt_type],
                 height=100
             )
         
@@ -412,15 +418,19 @@ def render_reflection_section(client):
         # Update the Generate Summary button section
         if st.button("Generate Reflection Summary", type="primary"):
             with st.spinner("Analyzing your reflection..."):
-                # Get content based on mode
-                content = "\n".join([
-                    f"{m['role']}: {m['content']}" 
-                    for m in st.session_state.chat_messages
-                ])
-                
-                if not content:
-                    st.warning("Please add some content before generating a summary.")
+                # Check if there are any user messages
+                user_messages = [msg for msg in st.session_state.chat_messages if msg["role"] == "user"]
+                if not user_messages:
+                    st.warning("No user input found. Please share your thoughts with Otto before generating a summary.")
                     return
+                
+                # Format the entire conversation history
+                conversation = []
+                for msg in st.session_state.chat_messages:
+                    role = "Otto" if msg["role"] == "assistant" else "User"
+                    conversation.append(f"{role}: {msg['content']}")
+                
+                content = "\n".join(conversation)
                 
                 # Generate summary using Azure OpenAI
                 summary = generate_summary(client, summary_prompt, content)
@@ -429,16 +439,21 @@ def render_reflection_section(client):
                     st.error("Failed to generate summary. Please try again.")
                     return
                 
-                # Display summary components
+                # Display summary
                 st.markdown("#### Summary")
                 st.markdown(summary)
     
     else:  # Freeform Journaling
         # Configuration for freeform journaling
         with st.expander("Configure Summary Generation"):
+            prompt_type = st.selectbox(
+                "Select summary template:",
+                list(REFLECTION_PROMPTS.keys()),
+                index=0
+            )
             summary_prompt = st.text_area(
                 "Customize summary generation prompt:",
-                value="Based on the journal entry, please provide:\n1. A brief summary of the reflection\n2. Key themes and insights\n3. Assessed mood valence (-1 to 1)",
+                value=REFLECTION_PROMPTS[prompt_type],
                 height=100
             )
             

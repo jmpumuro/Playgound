@@ -1,65 +1,87 @@
 import streamlit as st
 import requests
-from datetime import datetime
+import base64
 
 def init_session_state():
     """Initialize session state variables"""
-    if 'user_token' not in st.session_state:
-        st.session_state.user_token = None
-    if 'is_authenticated' not in st.session_state:
-        st.session_state.is_authenticated = False
+    if 'auth_token' not in st.session_state:
+        st.session_state.auth_token = None
 
-def login_user(username, password):
+def login_user(email, password):
     """Authenticate user and get token"""
     try:
-        # Replace with your actual API endpoint
-        response = requests.post(
-            "YOUR_API_ENDPOINT/login",
-            json={"username": username, "password": password}
-        )
+        # Authentication credentials from secrets
+        uid = st.secrets["AUTH_UID"]
+        secret = st.secrets["AUTH_SECRET"]
+        basic = base64.b64encode(f"{uid}:{secret}".encode()).decode()
         
+        # Make authentication request
+        url = "https://authsvc-bowie.sondermind.biz/oauth/token"
+        headers = {"Authorization": f"Basic {basic}"}
+        payload = {
+            "grant_type": "password",
+            "username": email,
+            "password": password
+        }
+        
+        response = requests.post(url, json=payload, headers=headers)
         if response.status_code == 200:
-            data = response.json()
-            return data.get('token'), None
+            return response.json().get("access_token"), None
         else:
             return None, "Invalid credentials. Please try again."
             
     except Exception as e:
-        return None, f"Login failed: {str(e)}"
+        return None, f"Authentication failed: {str(e)}"
 
-def render_login_screen():
-    """Render the login screen"""
+def render_auth_header():
+    """Render the authentication header with restart and logout buttons"""
+    header_col1, header_col2, header_col3 = st.columns([5, 1, 1])
+    
+    with header_col2:
+        if st.button("Restart Chat"):
+            # Preserve active tab while clearing chat state
+            active_tab = st.session_state.get('active_tab')
+            if "reflection_session" in st.session_state:
+                del st.session_state.reflection_session
+            if "chat_messages" in st.session_state:
+                del st.session_state.chat_messages
+            if active_tab:
+                st.session_state.active_tab = active_tab
+            st.rerun()
+            
+    with header_col3:
+        if st.button("Logout"):
+            logout_user()
+            st.rerun()
+
+def render_login_section():
+    """Render login section and handle authentication"""
     init_session_state()
     
-    if st.session_state.is_authenticated:
+    if st.session_state.auth_token:
+        render_auth_header()
         return True
-    
-    st.markdown("### Welcome to Otto")
-    st.markdown("Please login to continue")
-    
-    with st.form("login_form"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submit = st.form_submit_button("Login")
         
-        if submit:
-            if username and password:
-                token, error = login_user(username, password)
-                if token:
-                    st.session_state.user_token = token
-                    st.session_state.is_authenticated = True
-                    st.success("Login successful!")
-                    st.rerun()
-                else:
-                    st.error(error)
-            else:
-                st.error("Please enter both username and password")
+    st.markdown("#### Login")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
     
-    st.markdown("---")
-    if st.button("Don't have an account? Sign up"):
-        st.session_state.show_signup = True
+    if st.button("Login"):
+        with st.spinner("Authenticating..."):
+            token, error = login_user(email, password)
+            if token:
+                st.session_state.auth_token = token
+                st.success("Login successful!")
+                st.rerun()
+            else:
+                st.error(error)
     
     return False
+
+def logout_user():
+    """Log out user by clearing session state"""
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
 
 def render_signup_form():
     """Render the signup form"""

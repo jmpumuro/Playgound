@@ -6,6 +6,7 @@ import base64
 import requests
 import json
 from reflection_template import REFLECTION_PROMPTS
+import auth
 
 
 def render_prompt_section():
@@ -273,56 +274,8 @@ def render_reflection_section(client):
     st.markdown("### Daily Reflection")
     
     # Check if user is authenticated
-    if "auth_token" not in st.session_state:
-        st.markdown("#### Login")
-        email = st.text_input("Email")
-        password = st.text_input("Password", type="password")
-        
-        if st.button("Login"):
-            with st.spinner("Authenticating..."):
-                try:
-                    # Authentication credentials from secrets
-                    uid = st.secrets["AUTH_UID"]
-                    secret = st.secrets["AUTH_SECRET"]
-                    basic = base64.b64encode(f"{uid}:{secret}".encode()).decode()
-                    
-                    # Make authentication request
-                    url = "https://authsvc-bowie.sondermind.biz/oauth/token"
-                    headers = {"Authorization": f"Basic {basic}"}
-                    payload = {
-                        "grant_type": "password",
-                        "username": email,
-                        "password": password
-                    }
-                    
-                    response = requests.post(url, json=payload, headers=headers)
-                    if response.status_code == 200:
-                        st.session_state.auth_token = response.json().get("access_token")
-                        st.success("Login successful!")
-                        st.rerun()
-                    else:
-                        st.error("Invalid credentials. Please try again.")
-                except Exception as e:
-                    st.error(f"Authentication failed: {str(e)}")
+    if not auth.render_login_section():
         return
-
-    # Create a container for the header with title and logout button
-    header_col1, header_col2, header_col3 = st.columns([5, 1, 1])
-    with header_col2:
-        if st.button("Restart Chat"):
-            # Preserve active tab while clearing chat state
-            active_tab = st.session_state.get('active_tab')  # Get current active tab
-            if "reflection_session" in st.session_state:
-                del st.session_state.reflection_session
-            if "chat_messages" in st.session_state:
-                del st.session_state.chat_messages
-            if active_tab:  # Restore active tab if it existed
-                st.session_state.active_tab = active_tab
-            st.rerun()
-    with header_col3:
-        if st.button("Logout"):
-            del st.session_state.auth_token
-            st.rerun()
 
     # Choose reflection mode
     reflection_mode = st.radio(

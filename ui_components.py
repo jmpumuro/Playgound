@@ -402,7 +402,8 @@ def render_reflection_section(client):
             prompt_type = st.selectbox(
                 "Select summary template:",
                 list(REFLECTION_PROMPTS.keys()),
-                index=0
+                index=list(REFLECTION_PROMPTS.keys()).index("Journal Summary"),  # Set default to Journal Summary
+                help="Choose a template for analyzing your journal entry"
             )
             summary_prompt = st.text_area(
                 "Customize summary generation prompt:",
@@ -419,18 +420,17 @@ def render_reflection_section(client):
 
         # Add summary generation button for journal entry
         if st.button("Generate Journal Summary", type="primary"):
-            if not journal_entry:
+            if not journal_entry or journal_entry.strip() == "":
                 st.warning("Please write your journal entry before generating a summary.")
-                return
-                
-            with st.spinner("Analyzing your journal entry..."):
-                # Generate summary using Azure OpenAI
-                summary = generate_summary(client, summary_prompt, journal_entry)
-                
-                if not summary:
-                    st.error("Failed to generate summary. Please try again.")
-                    return
-                
-                # Display summary components
-                st.markdown("#### Summary")
-                st.markdown(summary)
+            else:
+                with st.spinner("Analyzing your journal entry..."):
+                    # Use the selected prompt template for the summary
+                    summary = generate_summary(client, summary_prompt, journal_entry)
+                    
+                    if not summary:
+                        st.error("Failed to generate summary. Please try again.")
+                        return
+                    
+                    # Display summary components
+                    st.markdown("#### Summary")
+                    st.markdown(summary)

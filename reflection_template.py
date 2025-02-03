@@ -21,5 +21,13 @@ REFLECTION_PROMPTS = {
     "Quick Review": """Please provide a concise analysis:
 1. Key points
 2. Main insight
-3. Mood score (-1 to 1)"""
+3. Mood score (-1 to 1)""",
+
+    "Journal Summary": """Please provide an objective summary of this journal entry:
+1. Brief summary of the content
+2. Key emotions expressed
+3. Main themes (if any)
+4. Mood assessment (-1 to 1)
+
+Keep the summary factual and focused only on what was written in the entry."""
 } 

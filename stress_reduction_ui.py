@@ -32,26 +32,23 @@ def get_relevant_resources(query: str) -> str:
 def generate_chat_response(client, messages):
     """Generate chat response using Azure OpenAI"""
     try:
-        # Extract the user's message
         last_message = messages[-1]["content"]
-        
-        # Get relevant resources if available
         rag_response = get_relevant_resources(last_message)
         
-        # Prepare messages for the chat
-        chat_messages = [{"role": "system", "content": st.session_state.system_prompt}]
-        
-        # Add RAG context if available
+        base_system_prompt = st.session_state.system_prompt
         if rag_response:
-            chat_messages.append({
-                "role": "system", 
-                "content": f"Use this information if relevant: {rag_response}"
-            })
-        
-        # Add conversation history
+            system_prompt = (
+                f"{base_system_prompt}\n\n"
+                f"Based on our knowledge base, here is relevant information to help answer:\n{rag_response}\n\n"
+                f"Please use this information to provide a detailed, accurate response. "
+                f"If the information is relevant, incorporate it naturally into your response."
+            )
+        else:
+            system_prompt = base_system_prompt
+            
+        chat_messages = [{"role": "system", "content": system_prompt}]
         chat_messages.extend(messages)
         
-        # Generate response
         response = client.chat.completions.create(
             model=AZURE_CONFIG["model"],
             messages=chat_messages,
@@ -118,9 +115,7 @@ def handle_chat_input(messages_container, client, prompt):
         with messages_container:
             with st.chat_message("assistant"):
                 with st.spinner(""):
-                    messages = [
-                        {"role": "system", "content": st.session_state.system_prompt},
-                    ]
+                    messages = []
                     messages.extend(st.session_state.stress_messages)
                     assistant_message = generate_chat_response(client, messages)
                 

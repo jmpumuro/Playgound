@@ -156,7 +156,7 @@ def handle_chat_input(messages_container, client, prompt):
 
 def render_stress_reduction_section(client=None):
     """Render stress reduction chat interface."""
-    st.markdown("### Stress Management Chat")
+    st.markdown("### Stress Management Agent")
     
     if client is None:
         client = get_azure_client()

@@ -2,14 +2,7 @@ import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional, Protocol
-from llama_index.core import (
-    VectorStoreIndex,
-    SimpleDirectoryReader,
-    Settings,
-    Document,
-    StorageContext,
-    load_index_from_storage,
-)
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings, Document, StorageContext, load_index_from_storage
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI
 import streamlit as st

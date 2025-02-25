@@ -149,5 +149,90 @@ CUSTOM_CSS = """
         background-color: #2b2b2b !important;
         color: white !important;
     }
+
+    /* Document Manager Styles */
+    .file-system {
+        background-color: #1E1E1E;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #404040;
+    }
+
+    .file-row {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        border-bottom: 1px solid #333;
+        transition: background-color 0.2s;
+    }
+
+    .file-row:hover {
+        background-color: #2A2A2A;
+    }
+
+    .file-icon {
+        font-size: 1.2em;
+        margin-right: 10px;
+        width: 30px;
+        color: #ff4b4b;
+    }
+
+    .file-name {
+        flex-grow: 1;
+        font-family: monospace;
+        color: white;
+    }
+
+    .file-size {
+        color: #888;
+        margin: 0 15px;
+        font-size: 0.9em;
+    }
+
+    .upload-zone {
+        border: 2px dashed #404040;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        margin: 20px 0;
+        background-color: #1E1E1E;
+        transition: all 0.2s ease;
+    }
+
+    .upload-zone:hover {
+        border-color: #ff4b4b;
+        background-color: #2A2A2A;
+    }
+
+    .upload-zone h4 {
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    /* File uploader customization */
+    .stFileUploader > div {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    .stFileUploader > div > div {
+        background-color: transparent !important;
+    }
+
+    /* Delete button customization */
+    .delete-btn {
+        color: #ff4b4b !important;
+        background: transparent !important;
+        border: 1px solid #ff4b4b !important;
+        padding: 5px 10px !important;
+        border-radius: 4px !important;
+        transition: all 0.2s ease;
+    }
+
+    .delete-btn:hover {
+        background-color: #ff4b4b !important;
+        color: white !important;
+    }
     </style>
 """

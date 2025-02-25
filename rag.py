@@ -42,46 +42,49 @@ class RAGSystem:
                 storage_context = StorageContext.from_defaults(persist_dir=self.storage_dir)
                 return load_index_from_storage(storage_context)
         except Exception as e:
-            print(f"Error loading existing index: {e}")
+            st.error(f"Error loading existing index: {e}")
         return None
         
     def load_documents(self, directory: str = "documents") -> VectorStoreIndex:
         """Load documents and create or update the index."""
         try:
-            documents = SimpleDirectoryReader(
-                directory,
-                required_exts=[".txt", ".pdf", ".md", ".docx"],
-                recursive=True
-            ).load_data()
-            
-            if not documents:
-                raise ValueError(f"No supported documents found in {directory}")
-            
-            print(f"Processing {len(documents)} documents")
-            processed_docs = []
-            for i, doc in enumerate(documents):
-                print(f"Doc {i}: {doc.text[:50]}...")
-                text = str(doc.text).strip()
-                if text:
-                    processed_docs.append(Document(text=text))
-            
-            if not processed_docs:
-                raise ValueError("No valid documents to process")
-            
-            self.index = VectorStoreIndex.from_documents(
-                processed_docs,
-                show_progress=True,
-                embed_model=Settings.embed_model
-            )
-            
-            if not os.path.exists(self.storage_dir):
-                os.makedirs(self.storage_dir)
-            self.index.storage_context.persist(persist_dir=self.storage_dir)
-            
-            return self.index
+            with st.spinner("Loading documents..."):
+                documents = SimpleDirectoryReader(
+                    directory,
+                    required_exts=[".txt", ".pdf", ".md", ".docx"],
+                    recursive=True
+                ).load_data()
+                
+                if not documents:
+                    raise ValueError(f"No supported documents found in {directory}")
+                
+                processed_docs = []
+                progress_bar = st.progress(0)
+                for i, doc in enumerate(documents):
+                    text = str(doc.text).strip()
+                    if text:
+                        processed_docs.append(Document(text=text))
+                    progress = (i + 1) / len(documents)
+                    progress_bar.progress(progress, f"Processing document {i + 1} of {len(documents)}")
+                
+                if not processed_docs:
+                    raise ValueError("No valid documents to process")
+                
+                with st.spinner("Creating document index..."):
+                    self.index = VectorStoreIndex.from_documents(
+                        processed_docs,
+                        show_progress=False,
+                        embed_model=Settings.embed_model
+                    )
+                
+                if not os.path.exists(self.storage_dir):
+                    os.makedirs(self.storage_dir)
+                self.index.storage_context.persist(persist_dir=self.storage_dir)
+                
+                return self.index
             
         except Exception as e:
-            print(f"Error loading documents: {str(e)}")
+            st.error(f"Error loading documents: {str(e)}")
             raise
     
     def query_documents(self, query: str) -> str:
@@ -103,15 +106,15 @@ if __name__ == "__main__":
     rag = RAGSystem()
     
     if rag.index is None:
-        print("Creating new index...")
+        st.info("Creating new index...")
         rag.load_documents("documents")
     else:
-        print("Using existing index...")
+        st.info("Using existing index...")
     
     test_query = "What information can you tell me about the documents?"
     try:
         response = rag.query_documents(test_query)
-        print("\nTest Query:", test_query)
-        print("Response:", response)
+        st.write("Test Query:", test_query)
+        st.write("Response:", response)
     except Exception as e:
-        print(f"Error during query: {e}") 
+        st.error(f"Error during query: {e}") 

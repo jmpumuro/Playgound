@@ -5,7 +5,6 @@ from templates.templates import PROMPTS, TRANSCRIPTS
 import base64
 import requests
 import json
-from components.reflection import render_reflection_section
 import auth
 
 

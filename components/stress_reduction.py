@@ -5,6 +5,7 @@ from config import AZURE_CONFIG
 from rag import get_rag_system
 from templates.stress_reduction_prompts import DEFAULT_SYSTEM_PROMPT
 from modal.modal_dialog import open_modal_dialog
+from components.document_manager import render_document_manager
 import time
 import re
 from openai.types.chat import ChatCompletion
@@ -154,18 +155,25 @@ class StressReductionChat:
         """Render the main chat interface"""
         st.markdown("### Stress Management Agent")
         
-        # Header with restart button
-        header_col1, header_col2 = st.columns([6, 1])
-        with header_col2:
-            if st.button("Restart Chat", key="stress_restart_button"):
-                st.session_state.stress_messages = []
-                st.session_state.chat_started = False
-                st.rerun()
+        # Create tabs for chat and document management
+        chat_tab, docs_tab = st.tabs(["Chat Interface", "Knowledge Base"])
         
-        self._render_configuration_section()
-        
-        if st.session_state.chat_started:
-            self._render_chat_section()
+        with chat_tab:
+            # Header with restart button
+            header_col1, header_col2 = st.columns([6, 1])
+            with header_col2:
+                if st.button("Restart Chat", key="stress_restart_button"):
+                    st.session_state.stress_messages = []
+                    st.session_state.chat_started = False
+                    st.rerun()
+            
+            self._render_configuration_section()
+            
+            if st.session_state.chat_started:
+                self._render_chat_section()
+            
+        with docs_tab:
+            render_document_manager()
 
     def _render_configuration_section(self):
         """Render the configuration expander"""

@@ -131,7 +131,7 @@ class DocumentManager:
                 unsafe_allow_html=True
             )
         with col2:
-            if st.button("🔄 Update Index", type="primary", use_container_width=True):
+            if st.button("Update Index", type="primary", use_container_width=True):
                 with st.spinner("Updating knowledge base..."):
                     try:
                         rag_system = get_rag_system()

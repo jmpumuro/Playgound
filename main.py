@@ -1,4 +1,20 @@
 import streamlit as st
+import nltk
+import os
+from pathlib import Path
+
+# Create a directory for NLTK data in the user's home directory
+nltk_data_dir = str(Path.home() / "nltk_data")
+if not os.path.exists(nltk_data_dir):
+    os.makedirs(nltk_data_dir, exist_ok=True)
+nltk.data.path.append(nltk_data_dir)
+
+# Download required NLTK data
+try:
+    nltk.download("stopwords", download_dir=nltk_data_dir, quiet=True)
+except Exception as e:
+    st.warning(f"Unable to download NLTK data: {str(e)}")
+
 from config import PAGE_CONFIG
 from styles import CUSTOM_CSS
 from azure_client import init_azure_openai, generate_summary

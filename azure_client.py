@@ -5,11 +5,32 @@ from config import AZURE_CONFIG
 def init_azure_openai():
     """Initialize Azure OpenAI client"""
     try:
+        # Construct the full endpoint URL
+        base_url = st.secrets["AZURE_OPENAI_ENDPOINT"]
+        deployment = st.secrets["CHAT_DEPLOYMENT"]
+        api_version = AZURE_CONFIG["api_version"]
+        
+        # Remove any trailing slashes and construct the endpoint
+        base_url = base_url.rstrip('/')
+        azure_endpoint = f"{base_url}/openai/deployments/{deployment}/chat/completions?api-version={api_version}"
+        
         client = AzureOpenAI(
             api_key=st.secrets["AZURE_OPENAI_KEY"],
             api_version=AZURE_CONFIG["api_version"],
-            azure_endpoint=st.secrets["AZURE_OPENAI_ENDPOINT"]
+            azure_endpoint=azure_endpoint
         )
+        
+        # Test the client with a simple request
+        try:
+            response = client.chat.completions.create(
+                model=AZURE_CONFIG["model"],
+                messages=[{"role": "system", "content": "Test"}],
+                max_tokens=5
+            )
+        except Exception as e:
+            print(f"Test request failed: {str(e)}")
+            raise e
+            
         return client
     except Exception as e:
         st.error(f"Error initializing Azure OpenAI: {str(e)}")

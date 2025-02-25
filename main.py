@@ -8,6 +8,7 @@ from ui_components import (
     render_results,
     render_reflection_section,
 )
+from stress_reduction_ui import render_stress_reduction_section
 
 def main():
     # Configure page
@@ -23,7 +24,7 @@ def main():
         return
     
     # Create main tabs
-    summary_tab, reflection_tab = st.tabs(["Session Summary", "Daily Reflection"])
+    summary_tab, reflection_tab, stress_tab = st.tabs(["Session Summary", "Daily Reflection", "Stress Reduction"])
     
     with summary_tab:
         # Main content
@@ -58,6 +59,9 @@ def main():
     
     with reflection_tab:
         render_reflection_section(client)
+        
+    with stress_tab:
+        render_stress_reduction_section(client)
 
 if __name__ == "__main__":
     main()

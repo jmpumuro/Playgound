@@ -9,7 +9,6 @@ from llama_index.core import (
     Document,
     StorageContext,
     load_index_from_storage,
-    QueryEngine
 )
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI

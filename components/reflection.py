@@ -3,7 +3,7 @@ from azure_client import generate_summary
 import requests
 import json
 import auth
-from reflection_template import REFLECTION_PROMPTS
+from templates.reflection_template import REFLECTION_PROMPTS
 
 def create_reflection_entry(token, mood):
     """Create a new reflection entry"""

@@ -3,8 +3,8 @@ import streamlit as st
 from azure_client import init_azure_openai
 from config import AZURE_CONFIG
 from rag import get_rag_system
-from stress_reduction_prompts import DEFAULT_SYSTEM_PROMPT
-from modal import open_modal_dialog
+from templates.stress_reduction_prompts import DEFAULT_SYSTEM_PROMPT
+from modal.modal_dialog import open_modal_dialog
 import time
 import re
 from openai.types.chat import ChatCompletion

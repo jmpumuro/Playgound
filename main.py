@@ -2,13 +2,13 @@ import streamlit as st
 from config import PAGE_CONFIG
 from styles import CUSTOM_CSS
 from azure_client import init_azure_openai, generate_summary
-from ui_components import (
+from components.ui_components import (
     render_prompt_section,
     render_transcript_section,
     render_results,
-    render_reflection_section,
 )
-from stress_reduction_ui import StressReductionChat
+from components.reflection import render_reflection_section
+from components.stress_reduction import StressReductionChat
 
 def main():
     # Configure page

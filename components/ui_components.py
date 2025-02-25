@@ -1,11 +1,11 @@
 from azure_client import generate_summary
 import streamlit as st
 from datetime import datetime
-from templates import PROMPTS, TRANSCRIPTS
+from templates.templates import PROMPTS, TRANSCRIPTS
 import base64
 import requests
 import json
-from reflection_ui import render_reflection_section
+from components.reflection import render_reflection_section
 import auth
 
 

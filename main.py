@@ -8,7 +8,7 @@ from ui_components import (
     render_results,
     render_reflection_section,
 )
-from stress_reduction_ui import render_stress_reduction_section
+from stress_reduction_ui import StressReductionChat
 
 def main():
     # Configure page
@@ -61,7 +61,8 @@ def main():
         render_reflection_section(client)
         
     with stress_tab:
-        render_stress_reduction_section(client)
+        chat = StressReductionChat()
+        chat.render_interface()
 
 if __name__ == "__main__":
     main()

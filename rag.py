@@ -8,13 +8,11 @@ from config import AZURE_CONFIG
 
 class RAGSystem:
     def __init__(self):
-        # Initialize Azure OpenAI settings
         self.azure_endpoint = st.secrets["AZURE_OPENAI_ENDPOINT"]
         self.api_key = st.secrets["AZURE_OPENAI_KEY"]
         self.embedding_deployment = st.secrets["EMBEDDING_DEPLOYMENT"]
-        self.storage_dir = "storage"  # Directory to store the index
+        self.storage_dir = "storage"
         
-        # Initialize embedding model with deployment name
         embed_model = AzureOpenAIEmbedding(
             azure_deployment_name=self.embedding_deployment,
             api_key=self.api_key,
@@ -23,10 +21,8 @@ class RAGSystem:
             max_retries=3
         )
         
-        # Set the embedding model as default
         Settings.embed_model = embed_model
         
-        # Initialize LLM
         llm = AzureOpenAI(
             model=AZURE_CONFIG["model"],
             deployment_name=st.secrets["CHAT_DEPLOYMENT"],
@@ -36,10 +32,7 @@ class RAGSystem:
             temperature=AZURE_CONFIG["temperature"]
         )
         
-        # Set the LLM
         Settings.llm = llm
-        
-        # Try to load existing index
         self.index = self.load_existing_index()
         
     def load_existing_index(self) -> Optional[VectorStoreIndex]:
@@ -55,7 +48,6 @@ class RAGSystem:
     def load_documents(self, directory: str = "documents") -> VectorStoreIndex:
         """Load documents and create or update the index."""
         try:
-            # Only load supported file types
             documents = SimpleDirectoryReader(
                 directory,
                 required_exts=[".txt", ".pdf", ".md", ".docx"],
@@ -76,14 +68,12 @@ class RAGSystem:
             if not processed_docs:
                 raise ValueError("No valid documents to process")
             
-            # Create new index
             self.index = VectorStoreIndex.from_documents(
                 processed_docs,
                 show_progress=True,
                 embed_model=Settings.embed_model
             )
             
-            # Save the index
             if not os.path.exists(self.storage_dir):
                 os.makedirs(self.storage_dir)
             self.index.storage_context.persist(persist_dir=self.storage_dir)
@@ -110,17 +100,14 @@ def get_rag_system() -> RAGSystem:
     return st.session_state.rag_system
 
 if __name__ == "__main__":
-    # Create RAG system
     rag = RAGSystem()
     
-    # Check if index exists, if not create it
     if rag.index is None:
         print("Creating new index...")
         rag.load_documents("documents")
     else:
         print("Using existing index...")
     
-    # Test query
     test_query = "What information can you tell me about the documents?"
     try:
         response = rag.query_documents(test_query)

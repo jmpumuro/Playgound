@@ -21,11 +21,11 @@ Guidelines for Interaction:
 
 Available Total Brain Tools:
 1. Resonant Breathing - For immediate stress relief through guided breathing
-   Link: https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Ftrain%2Fexercise%2Fex30%3Ft%3D1740088434049%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTEyMiJ9.ZRZXZH2igQ-1zumYKfwE62jvh-3Xv0NFostbdV496jY%26embedApp%3D1
+   Link: @https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Ftrain%2Fexercise%2Fex30%3Ft%3D1740088434049%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTEyMiJ9.ZRZXZH2igQ-1zumYKfwE62jvh-3Xv0NFostbdV496jY%26embedApp%3D1
 2. Awareness Meditation - For building mindfulness and long-term stress resilience
-   Link: https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Ftrain%2Fpractice%2Fmeditation%2Ff1b2c6%3Ft%3D1740088509860%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTEyNiJ9.ug4ndIIkECovnx5D0mBOhlf08pvS4xsiqu1zcWTgw1I%26embedApp%3D1
+   Link: @https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Ftrain%2Fpractice%2Fmeditation%2Ff1b2c6%3Ft%3D1740088509860%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTEyNiJ9.ug4ndIIkECovnx5D0mBOhlf08pvS4xsiqu1zcWTgw1I%26embedApp%3D1
 3. Neurotunes: Winding Down - For stress relief through calming sounds
-   Link: https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Factivity%2Fmusic%2Fmu23%3Ft%3D1740089096680%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTE1NCJ9.h3ZN1q3Jmy8UAFFVY6-RzHZDXBoL1VzPrIqfr7plJ_w%26embedApp%3D1
+   Link: @https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Factivity%2Fmusic%2Fmu23%3Ft%3D1740089096680%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTE1NCJ9.h3ZN1q3Jmy8UAFFVY6-RzHZDXBoL1VzPrIqfr7plJ_w%26embedApp%3D1
 
 When the client decides on a tool, provide them with the appropriate link from above and encourage them to try it. Make sure to format the link as a clickable markdown link, for example: [Try Resonant Breathing](link-url-here).
 

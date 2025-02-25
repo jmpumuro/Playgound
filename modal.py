@@ -9,7 +9,6 @@ def open_modal_dialog(title: str, url: str, height: int = 600):
         url (str): The URL to display in the iframe
         height (int, optional): Height of the iframe in pixels. Defaults to 600.
     """
-    # Display the iframe with the content
     iframe_style = f"""
         <style>
             iframe {{

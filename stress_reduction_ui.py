@@ -7,7 +7,6 @@ from modal import open_modal_dialog
 import time
 import re
 
-# Initialize Azure OpenAI client
 def get_azure_client():
     """Get or initialize Azure OpenAI client"""
     if 'azure_client' not in st.session_state:
@@ -78,13 +77,9 @@ def transform_links_to_buttons(text):
         tuple: (transformed_text, has_links) where transformed_text has links removed 
         and has_links indicates if any links were found
     """
-    # Regular expression to find markdown links
     pattern = r'\[(.*?)\]\((.*?)\)'
     links = re.findall(pattern, text)
-    
-    # Remove links from the text
     transformed_text = re.sub(pattern, '', text)
-    
     return transformed_text.strip(), links
 
 @st.dialog("Library", width="large")
@@ -114,17 +109,15 @@ def handle_chat_input(messages_container, client, prompt):
         return
         
     try:
-        # Display user message
         with messages_container:
             with st.chat_message("user"):
                 st.markdown(prompt)
         
         st.session_state.stress_messages.append({"role": "user", "content": prompt})
         
-        # Generate and display assistant response
         with messages_container:
             with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
+                with st.spinner(""):
                     messages = [
                         {"role": "system", "content": st.session_state.system_prompt},
                     ]
@@ -132,34 +125,29 @@ def handle_chat_input(messages_container, client, prompt):
                     assistant_message = generate_chat_response(client, messages)
                 
                 if assistant_message and assistant_message.strip():
-                    # Transform links to buttons
                     message_text, links = transform_links_to_buttons(assistant_message)
+                    message_id = int(time.time() * 1000)
                     
-                    # Store the transformed message and links in session state
-                    message_id = int(time.time() * 1000)  # Unique ID for this message
                     if 'message_links' not in st.session_state:
                         st.session_state.message_links = {}
                     st.session_state.message_links[message_id] = links
                     
-                    # Display the main message text
                     if message_text:
                         st.write(message_text)
                     
-                    # Display any links as buttons in a more compact way
                     if links:
-                        cols = st.columns([1] * min(len(links), 3))  # Up to 3 buttons per row
+                        cols = st.columns([1] * min(len(links), 3))
                         for idx, (link_text, link_url) in enumerate(links):
                             col_idx = idx % len(cols)
                             with cols[col_idx]:
                                 button_key = f"link_{message_id}_{idx}"
-                                if st.button(f"🔗 {link_text}", key=button_key, use_container_width=True):
+                                if st.button(f"{link_text}", key=button_key, use_container_width=True):
                                     open_modal_dialog(link_text, link_url)
                     
-                    # Store the transformed message in the session state
                     st.session_state.stress_messages.append({
                         "role": "assistant",
-                        "content": message_text,  # Store the transformed text without links
-                        "message_id": message_id  # Store reference to the links
+                        "content": message_text,
+                        "message_id": message_id
                     })
                 else:
                     st.error("I apologize, but I couldn't generate a proper response. Please try again.")
@@ -172,18 +160,12 @@ def handle_chat_input(messages_container, client, prompt):
                 st.error("I apologize, but I encountered an error. Please try again.")
 
 def render_stress_reduction_section(client=None):
-    """Render stress reduction chat interface.
-    
-    Args:
-        client: Optional Azure OpenAI client. If not provided, will initialize a new one.
-    """
+    """Render stress reduction chat interface."""
     st.markdown("### Stress Management Chat")
     
-    # Get Azure client if not provided
     if client is None:
         client = get_azure_client()
     
-    # Initialize session state
     if "stress_messages" not in st.session_state:
         st.session_state.stress_messages = []
     if "message_links" not in st.session_state:
@@ -193,7 +175,6 @@ def render_stress_reduction_section(client=None):
     if "chat_started" not in st.session_state:
         st.session_state.chat_started = False
     
-    # Header with control buttons
     header_col1, header_col2 = st.columns([6, 1])
     with header_col2:
         if st.button("Restart Chat", key="stress_restart_button"):
@@ -201,7 +182,6 @@ def render_stress_reduction_section(client=None):
             st.session_state.chat_started = False
             st.rerun()
     
-    # Configuration section
     with st.expander("Configure Chat Agent", expanded=not st.session_state.chat_started):
         st.text_area(
             "Customize the agent's behavior:",
@@ -215,24 +195,19 @@ def render_stress_reduction_section(client=None):
             if st.button("Start Chat", type="primary", key="stress_start_button"):
                 st.session_state.system_prompt = st.session_state.prompt_editor
                 st.session_state.chat_started = True
-                # Add initial message
                 st.session_state.stress_messages.append({
                     "role": "assistant",
                     "content": "Hello! I'm here to help you manage stress and develop effective coping strategies. How are you feeling today?"
                 })
                 st.rerun()
     
-    # Chat Interface
     if st.session_state.chat_started:
-        # Create a container for messages
         messages_container = st.container()
         
-        # Display all messages
         with messages_container:
             for message in st.session_state.stress_messages:
                 with st.chat_message(message["role"]):
                     st.markdown(message["content"])
-                    # If it's an assistant message and has links, display the buttons
                     if message["role"] == "assistant" and "message_id" in message:
                         message_links = st.session_state.message_links.get(message["message_id"], [])
                         if message_links:
@@ -244,7 +219,6 @@ def render_stress_reduction_section(client=None):
                                     if st.button(f"🔗 {link_text}", key=button_key, use_container_width=True):
                                         open_modal_dialog(link_text, link_url)
         
-        # Chat input
         prompt = st.chat_input("Type your message here...", key="stress_chat_input")
         if prompt:
             handle_chat_input(messages_container, client, prompt)

@@ -12,7 +12,7 @@ class RAGSystem:
         self.azure_endpoint = st.secrets["AZURE_OPENAI_ENDPOINT"]
         self.api_key = st.secrets["AZURE_OPENAI_KEY"]
         self.embedding_deployment = st.secrets["EMBEDDING_DEPLOYMENT"]
-        self.storage_dir = "storage"  # Directory to store the index
+        self.storage_dir = "tmp/storage"  # Directory to store the index
         
         # Initialize embedding model with deployment name
         embed_model = AzureOpenAIEmbedding(

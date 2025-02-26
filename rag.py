@@ -8,11 +8,13 @@ from config import AZURE_CONFIG
 
 class RAGSystem:
     def __init__(self):
+        # Initialize Azure OpenAI settings
         self.azure_endpoint = st.secrets["AZURE_OPENAI_ENDPOINT"]
         self.api_key = st.secrets["AZURE_OPENAI_KEY"]
         self.embedding_deployment = st.secrets["EMBEDDING_DEPLOYMENT"]
-        self.storage_dir = "storage"
+        self.storage_dir = "storage"  # Directory to store the index
         
+        # Initialize embedding model with deployment name
         embed_model = AzureOpenAIEmbedding(
             azure_deployment_name=self.embedding_deployment,
             api_key=self.api_key,
@@ -21,8 +23,10 @@ class RAGSystem:
             max_retries=3
         )
         
+        # Set the embedding model as default
         Settings.embed_model = embed_model
         
+        # Initialize LLM
         llm = AzureOpenAI(
             model=AZURE_CONFIG["model"],
             deployment_name=st.secrets["CHAT_DEPLOYMENT"],
@@ -32,7 +36,10 @@ class RAGSystem:
             temperature=AZURE_CONFIG["temperature"]
         )
         
+        # Set the LLM
         Settings.llm = llm
+        
+        # Try to load existing index
         self.index = self.load_existing_index()
         
     def load_existing_index(self) -> Optional[VectorStoreIndex]:
@@ -42,49 +49,49 @@ class RAGSystem:
                 storage_context = StorageContext.from_defaults(persist_dir=self.storage_dir)
                 return load_index_from_storage(storage_context)
         except Exception as e:
-            st.error(f"Error loading existing index: {e}")
+            print(f"Error loading existing index: {e}")
         return None
         
     def load_documents(self, directory: str = "documents") -> VectorStoreIndex:
         """Load documents and create or update the index."""
         try:
-            with st.spinner("Loading documents..."):
-                documents = SimpleDirectoryReader(
-                    directory,
-                    required_exts=[".txt", ".pdf", ".md", ".docx"],
-                    recursive=True
-                ).load_data()
-                
-                if not documents:
-                    raise ValueError(f"No supported documents found in {directory}")
-                
-                processed_docs = []
-                progress_bar = st.progress(0)
-                for i, doc in enumerate(documents):
-                    text = str(doc.text).strip()
-                    if text:
-                        processed_docs.append(Document(text=text))
-                    progress = (i + 1) / len(documents)
-                    progress_bar.progress(progress, f"Processing document {i + 1} of {len(documents)}")
-                
-                if not processed_docs:
-                    raise ValueError("No valid documents to process")
-                
-                with st.spinner("Creating document index..."):
-                    self.index = VectorStoreIndex.from_documents(
-                        processed_docs,
-                        show_progress=False,
-                        embed_model=Settings.embed_model
-                    )
-                
-                if not os.path.exists(self.storage_dir):
-                    os.makedirs(self.storage_dir)
-                self.index.storage_context.persist(persist_dir=self.storage_dir)
-                
-                return self.index
+            # Only load supported file types
+            documents = SimpleDirectoryReader(
+                directory,
+                required_exts=[".txt", ".pdf", ".md", ".docx"],
+                recursive=True
+            ).load_data()
+            
+            if not documents:
+                raise ValueError(f"No supported documents found in {directory}")
+            
+            print(f"Processing {len(documents)} documents")
+            processed_docs = []
+            for i, doc in enumerate(documents):
+                print(f"Doc {i}: {doc.text[:50]}...")
+                text = str(doc.text).strip()
+                if text:
+                    processed_docs.append(Document(text=text))
+            
+            if not processed_docs:
+                raise ValueError("No valid documents to process")
+            
+            # Create new index
+            self.index = VectorStoreIndex.from_documents(
+                processed_docs,
+                show_progress=True,
+                embed_model=Settings.embed_model
+            )
+            
+            # Save the index
+            if not os.path.exists(self.storage_dir):
+                os.makedirs(self.storage_dir)
+            self.index.storage_context.persist(persist_dir=self.storage_dir)
+            
+            return self.index
             
         except Exception as e:
-            st.error(f"Error loading documents: {str(e)}")
+            print(f"Error loading documents: {str(e)}")
             raise
     
     def query_documents(self, query: str) -> str:
@@ -103,18 +110,21 @@ def get_rag_system() -> RAGSystem:
     return st.session_state.rag_system
 
 if __name__ == "__main__":
+    # Create RAG system
     rag = RAGSystem()
     
+    # Check if index exists, if not create it
     if rag.index is None:
-        st.info("Creating new index...")
+        print("Creating new index...")
         rag.load_documents("documents")
     else:
-        st.info("Using existing index...")
+        print("Using existing index...")
     
+    # Test query
     test_query = "What information can you tell me about the documents?"
     try:
         response = rag.query_documents(test_query)
-        st.write("Test Query:", test_query)
-        st.write("Response:", response)
+        print("\nTest Query:", test_query)
+        print("Response:", response)
     except Exception as e:
-        st.error(f"Error during query: {e}") 
+        print(f"Error during query: {e}") 

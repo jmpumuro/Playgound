@@ -1,5 +1,22 @@
 import streamlit as st
 import os
+import nltk
+from pathlib import Path
+
+nltk_data_dir = '/tmp/nltk_data' 
+os.environ['NLTK_DATA'] = nltk_data_dir
+
+if not os.path.exists(nltk_data_dir):
+    os.makedirs(nltk_data_dir, exist_ok=True)
+
+required_packages = ['stopwords', 'punkt', 'averaged_perceptron_tagger', 'wordnet']
+for package in required_packages:
+    try:
+        nltk.download(package, download_dir=nltk_data_dir, quiet=True)
+    except Exception as e:
+        st.warning(f"Failed to download NLTK package {package}: {str(e)}")
+
+nltk.data.path.insert(0, nltk_data_dir)
 
 # Now import the rest of the dependencies
 from config import PAGE_CONFIG

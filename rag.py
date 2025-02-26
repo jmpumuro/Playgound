@@ -1,10 +1,14 @@
 import os
+import tempfile
 from typing import List, Optional
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings, Document, StorageContext, load_index_from_storage
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 from llama_index.llms.azure_openai import AzureOpenAI
 import streamlit as st
 from config import AZURE_CONFIG
+
+# Set tiktoken cache directory to system temp directory
+os.environ["TIKTOKEN_CACHE_DIR"] = tempfile.gettempdir()
 
 class RAGSystem:
     def __init__(self):

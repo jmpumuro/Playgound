@@ -9,7 +9,6 @@ from components.document_manager import render_document_manager
 import time
 import re
 from openai.types.chat import ChatCompletion
-import urllib.parse
 
 class ChatMessage:
     def __init__(self, role: str, content: str, message_id: Optional[int] = None):
@@ -24,12 +23,6 @@ class StressReductionChat:
     def __init__(self):
         self.client = self._initialize_azure_client()
         self._initialize_session_state()
-        # Store the exact URLs
-        self.tool_urls = {
-            "resonant_breathing": "https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Ftrain%2Fexercise%2Fex30%3Ft%3D1740088434049%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTEyMiJ9.ZRZXZH2igQ-1zumYKfwE62jvh-3Xv0NFostbdV496jY%26embedApp%3D1",
-            "awareness_meditation": "https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Ftrain%2Fpractice%2Fmeditation%2Ff1b2c6%3Ft%3D1740088509860%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTEyNiJ9.ug4ndIIkECovnx5D0mBOhlf08pvS4xsiqu1zcWTgw1I%26embedApp%3D1",
-            "neurotunes": "https://embed.totalbrain.com/?client=embed&showAssessmentResult=false&showSignUpPage=false&redirect_uri=https%3A%2F%2Fportal.totalbrain.com%2Factivity%2Fmusic%2Fmu23%3Ft%3D1740089096680%26token%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Ik1ZQlJBSU4tNTIwMTE1NCJ9.h3ZN1q3Jmy8UAFFVY6-RzHZDXBoL1VzPrIqfr7plJ_w%26embedApp%3D1"
-        }
 
     def _initialize_azure_client(self):
         """Initialize and return Azure OpenAI client"""
@@ -96,27 +89,11 @@ class StressReductionChat:
             return None
 
     def _parse_markdown_links(self, text: str) -> Tuple[str, List[Tuple[str, str]]]:
-        """Extract markdown links from text and map to stored URLs"""
-        pattern = r'\[(.*?)\]\((@?[^)]+)\)'
+        """Extract markdown links from text"""
+        pattern = r'\[(.*?)\]\((.*?)\)'
         links = re.findall(pattern, text)
-        
-        processed_links = []
-        for text, url in links:
-            # Remove @ prefix if present
-            url = url.removeprefix('@')
-            
-            # Map to stored URLs based on link text
-            if "Resonant Breathing" in text:
-                url = self.tool_urls["resonant_breathing"]
-            elif "Awareness Meditation" in text:
-                url = self.tool_urls["awareness_meditation"]
-            elif "Neurotunes" in text:
-                url = self.tool_urls["neurotunes"]
-                
-            processed_links.append((text, url))
-            
         transformed_text = re.sub(pattern, '', text)
-        return transformed_text.strip(), processed_links
+        return transformed_text.strip(), links
 
     def _render_message_links(self, message_id: int, links: List[Tuple[str, str]]):
         """Render links as buttons in columns"""

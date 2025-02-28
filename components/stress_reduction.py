@@ -4,6 +4,7 @@ from azure_client import init_azure_openai
 from config import AZURE_CONFIG
 from rag import get_rag_system
 from templates.stress_reduction_prompts import DEFAULT_SYSTEM_PROMPT
+from templates.link_injector import inject_tool_link, get_tool_link
 from modal.modal_dialog import open_modal_dialog
 from components.document_manager import render_document_manager
 import time
@@ -104,8 +105,7 @@ class StressReductionChat:
         for idx, (link_text, link_url) in enumerate(links):
             col_idx = idx % len(cols)
             with cols[col_idx]:
-                button_key = f"link_{message_id}_{idx}"
-                if st.button(f"{link_text}", key=button_key, use_container_width=True):
+                if st.button(f"{link_text}", key=f"link_{message_id}_{idx}", use_container_width=True):
                     open_modal_dialog(link_text, link_url)
 
     def _handle_user_message(self, messages_container, prompt: str):
@@ -135,21 +135,28 @@ class StressReductionChat:
 
     def _process_assistant_response(self, response: str):
         """Process and display assistant's response with links"""
-        message_text, links = self._parse_markdown_links(response)
-        message_id = int(time.time() * 1000)
-        
-        if message_text:
-            st.write(message_text)
-        
-        if links:
-            self._render_message_links(message_id, links)
-            st.session_state.message_links[message_id] = links
-        
-        st.session_state.stress_messages.append({
-            "role": "assistant",
-            "content": message_text,
-            "message_id": message_id
-        })
+        try:
+            # First inject any tool links
+            response_with_links = inject_tool_link(response)
+            
+            # Then parse any remaining markdown links
+            message_text, links = self._parse_markdown_links(response_with_links)
+            message_id = int(time.time() * 1000)
+            
+            if message_text:
+                st.markdown(message_text)
+            
+            if links:
+                self._render_message_links(message_id, links)
+                st.session_state.message_links[message_id] = links
+            
+            st.session_state.stress_messages.append({
+                "role": "assistant",
+                "content": message_text,
+                "message_id": message_id
+            })
+        except Exception as e:
+            st.error("I apologize, but I encountered an issue processing the response. Let me try a different approach.")
 
     def render_interface(self):
         """Render the main chat interface"""

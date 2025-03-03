@@ -106,7 +106,37 @@ class StressReductionChat:
             col_idx = idx % len(cols)
             with cols[col_idx]:
                 if st.button(f"{link_text}", key=f"link_{message_id}_{idx}", use_container_width=True):
+                    # Set modal state to True when opening
+                    st.session_state.modal_open = True
+                    st.session_state.current_tool = link_text
                     open_modal_dialog(link_text, link_url)
+
+    def _generate_tool_summary(self, tool_name: str):
+        """Generate a summary of the conversation after tool usage"""
+        summary_prompt = (
+            f"The user just completed using the {tool_name} tool. "
+            "Please provide a brief summary of our conversation and the tool recommendation. "
+            "Keep it concise and focus on the key points that led to suggesting this tool."
+        )
+        
+        # Create a copy of messages for summary generation
+        messages_for_summary = [
+            {"role": "user", "content": summary_prompt}
+        ]
+        
+        try:
+            response = self._generate_chat_response(messages_for_summary)
+            if response:
+                # Store the summary in session state
+                if "tool_summaries" not in st.session_state:
+                    st.session_state.tool_summaries = []
+                st.session_state.tool_summaries.append({
+                    "tool": tool_name,
+                    "summary": response,
+                    "timestamp": time.time()
+                })
+        except Exception as e:
+            st.error(f"Error generating summary: {str(e)}")
 
     def _handle_user_message(self, messages_container, prompt: str):
         """Process user message and generate response"""
@@ -160,6 +190,32 @@ class StressReductionChat:
 
     def render_interface(self):
         """Render the main chat interface"""
+        # Handle summary generation if flag is set
+        if st.session_state.get("generate_summary"):
+            tool_name = st.session_state.get("summary_tool", "the tool")
+            summary_prompt = (
+                "Please provide a concise summary of our conversation, including: "
+                "1. The main concerns or issues discussed\n"
+                "2. How the tool was recommended and its intended benefits\n"
+                "3. Key takeaways from using the tool\n"
+                "Keep the summary brief and focused on the most important points."
+            )
+            
+            # Generate response without adding user message to chat history
+            temp_messages = st.session_state.stress_messages.copy()
+            temp_messages.append({"role": "user", "content": summary_prompt})
+            response = self._generate_chat_response(temp_messages)
+            
+            if response:
+                # Process the response using existing method to handle links
+                with st.chat_message("assistant"):
+                    self._process_assistant_response(f"**Conversation Summary:**\n\n{response}")
+            
+            # Clear the flags
+            st.session_state.generate_summary = False
+            st.session_state.summary_tool = None
+            st.rerun()
+        
         st.markdown("### Stress Management Agent")
         
         # Create tabs for chat and document management

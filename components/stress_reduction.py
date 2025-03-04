@@ -5,6 +5,7 @@ from config import AZURE_CONFIG
 from rag import get_rag_system
 from templates.stress_reduction_prompts import DEFAULT_SYSTEM_PROMPT
 from templates.link_injector import inject_tool_link, get_tool_link
+from templates.stress_reduction_summary import get_tool_summary_prompt, get_conversation_summary_prompt
 from modal.modal_dialog import open_modal_dialog
 from components.document_manager import render_document_manager
 import time
@@ -113,11 +114,7 @@ class StressReductionChat:
 
     def _generate_tool_summary(self, tool_name: str):
         """Generate a summary of the conversation after tool usage"""
-        summary_prompt = (
-            f"The user just completed using the {tool_name} tool. "
-            "Please provide a brief summary of our conversation and the tool recommendation. "
-            "Keep it concise and focus on the key points that led to suggesting this tool."
-        )
+        summary_prompt = get_tool_summary_prompt(tool_name)
         
         # Create a copy of messages for summary generation
         messages_for_summary = [
@@ -193,13 +190,7 @@ class StressReductionChat:
         # Handle summary generation if flag is set
         if st.session_state.get("generate_summary"):
             tool_name = st.session_state.get("summary_tool", "the tool")
-            summary_prompt = (
-                "Please provide a concise summary of our conversation, including: "
-                "1. The main concerns or issues discussed\n"
-                "2. How the tool was recommended and its intended benefits\n"
-                "3. Key takeaways from using the tool\n"
-                "Keep the summary brief and focused on the most important points."
-            )
+            summary_prompt = get_conversation_summary_prompt()
             
             # Generate response without adding user message to chat history
             temp_messages = st.session_state.stress_messages.copy()

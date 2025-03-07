@@ -145,6 +145,10 @@ class StressReductionChat:
         if not prompt.strip():
             return
 
+        # Remove feedback dialog flag completely when user sends a message
+        if "show_feedback_dialog" in st.session_state:
+            del st.session_state.show_feedback_dialog
+
         # Display user message
         with messages_container:
             with st.chat_message("user"):
@@ -210,9 +214,12 @@ class StressReductionChat:
             # Clear the flags
             st.session_state.generate_summary = False
             st.session_state.summary_tool = None
+            # Also clear feedback dialog flag
+            if "show_feedback_dialog" in st.session_state:
+                del st.session_state.show_feedback_dialog
             st.rerun()
         
-        # Define the feedback dialog function
+        # Define the feedback dialog function - only used when explicitly called
         @st.dialog("Feedback Form", width="large")
         def show_feedback_dialog():
             feedback_url = "https://docs.google.com/spreadsheets/d/1ZRIkMOIKR4XoI5CbXtvbfAruFuSdxaKDwD41nrybd7c/edit?usp=sharing"
@@ -237,11 +244,13 @@ class StressReductionChat:
                 f'<iframe src="{feedback_url}" title="Feedback Form"></iframe>',
                 unsafe_allow_html=True
             )
-        
-        # Check if we should show the feedback dialog
-        if st.session_state.get("show_feedback_dialog", False):
-            show_feedback_dialog()
-            # We don't reset the flag here because the dialog will stay open until dismissed
+            
+            # Add a button to explicitly close the dialog
+            if st.button("Close", type="primary"):
+                # Remove the flag completely instead of setting to False
+                if "show_feedback_dialog" in st.session_state:
+                    del st.session_state.show_feedback_dialog
+                st.rerun()
         
         st.markdown("### Stress Management Agent")
         
@@ -255,13 +264,16 @@ class StressReductionChat:
                 if st.button("Restart Chat", key="stress_restart_button"):
                     st.session_state.stress_messages = []
                     st.session_state.chat_started = False
+                    # Remove the feedback dialog flag completely
+                    if "show_feedback_dialog" in st.session_state:
+                        del st.session_state.show_feedback_dialog
                     st.rerun()
             with header_col3:
                 # Display feedback form in a modal dialog
                 if st.button("Feedback", key="stress_feedback_button"):
-                    # Set flag to show feedback dialog
+                    # Only now do we check and show the feedback dialog
                     st.session_state.show_feedback_dialog = True
-                    st.rerun()
+                    show_feedback_dialog()
             
             self._render_configuration_section()
             
@@ -290,6 +302,9 @@ class StressReductionChat:
         """Initialize a new chat session"""
         st.session_state.system_prompt = st.session_state.prompt_editor
         st.session_state.chat_started = True
+        # Remove feedback dialog flag completely when starting a new chat
+        if "show_feedback_dialog" in st.session_state:
+            del st.session_state.show_feedback_dialog
         st.session_state.stress_messages.append({
             "role": "assistant",
             "content": "Hello! I'm here to help you manage stress and develop effective coping strategies. How are you feeling today?"

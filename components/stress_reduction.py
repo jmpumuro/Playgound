@@ -111,7 +111,11 @@ class StressReductionChat:
                     # Set modal state to True when opening
                     st.session_state.modal_open = True
                     st.session_state.current_tool = link_text
-                    open_modal_dialog(link_text, link_url)
+                    open_modal_dialog(
+                        title="Link",
+                        url=link_url,
+                        height=700
+                    )
 
     def _generate_tool_summary(self, tool_name: str):
         """Generate a summary of the conversation after tool usage"""
@@ -208,6 +212,37 @@ class StressReductionChat:
             st.session_state.summary_tool = None
             st.rerun()
         
+        # Define the feedback dialog function
+        @st.dialog("Feedback Form", width="large")
+        def show_feedback_dialog():
+            feedback_url = "https://docs.google.com/spreadsheets/d/1ZRIkMOIKR4XoI5CbXtvbfAruFuSdxaKDwD41nrybd7c/edit?usp=sharing"
+            
+            # Add custom CSS to make the iframe as large as possible
+            st.markdown(
+                """
+                <style>
+                    iframe {
+                        width: 100%;
+                        height: 80vh;
+                        border: none;
+                        border-radius: 8px;
+                    }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # Display the Google Sheet in an iframe
+            st.markdown(
+                f'<iframe src="{feedback_url}" title="Feedback Form"></iframe>',
+                unsafe_allow_html=True
+            )
+        
+        # Check if we should show the feedback dialog
+        if st.session_state.get("show_feedback_dialog", False):
+            show_feedback_dialog()
+            # We don't reset the flag here because the dialog will stay open until dismissed
+        
         st.markdown("### Stress Management Agent")
         
         # Create tabs for chat and document management
@@ -222,10 +257,11 @@ class StressReductionChat:
                     st.session_state.chat_started = False
                     st.rerun()
             with header_col3:
-                # Get the Google Sheets URL from secrets
-                feedback_url = st.secrets.connections.gsheets.spreadsheet
+                # Display feedback form in a modal dialog
                 if st.button("Feedback", key="stress_feedback_button"):
-                    webbrowser.open_new_tab(feedback_url)
+                    # Set flag to show feedback dialog
+                    st.session_state.show_feedback_dialog = True
+                    st.rerun()
             
             self._render_configuration_section()
             

@@ -10,6 +10,7 @@ from modal.modal_dialog import open_modal_dialog
 from components.document_manager import render_document_manager
 import time
 import re
+import webbrowser
 from openai.types.chat import ChatCompletion
 
 class ChatMessage:
@@ -213,13 +214,17 @@ class StressReductionChat:
         chat_tab, docs_tab = st.tabs(["Chat Interface", "Knowledge Base"])
         
         with chat_tab:
-            # Header with restart button
-            header_col1, header_col2 = st.columns([6, 1])
+            # Header with restart button and feedback button
+            header_col1, header_col2, header_col3 = st.columns([6, 1, 1])
             with header_col2:
                 if st.button("Restart Chat", key="stress_restart_button"):
                     st.session_state.stress_messages = []
                     st.session_state.chat_started = False
                     st.rerun()
+            with header_col3:
+                feedback_url = "https://docs.google.com/spreadsheets/d/1ZRIkMOIKR4XoI5CbXtvbfAruFuSdxaKDwD41nrybd7c/edit?usp=sharing"
+                if st.button("Feedback", key="stress_feedback_button"):
+                    webbrowser.open_new_tab(feedback_url)
             
             self._render_configuration_section()
             

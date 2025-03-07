@@ -266,6 +266,23 @@ class StressReductionChat:
         with messages_container:
             self._render_chat_history()
         
+        # Add auto-scroll functionality
+        st.markdown("""
+        <script>
+            function scrollToBottom() {
+                const chatContainer = document.querySelector('.main');
+                if (chatContainer) {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+            }
+            
+            // Scroll when page loads and after content changes
+            window.addEventListener('load', scrollToBottom);
+            const observer = new MutationObserver(scrollToBottom);
+            observer.observe(document.body, { childList: true, subtree: true });
+        </script>
+        """, unsafe_allow_html=True)
+        
         prompt = st.chat_input("Type your message here...", key="stress_chat_input")
         if prompt:
             self._handle_user_message(messages_container, prompt)

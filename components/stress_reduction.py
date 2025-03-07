@@ -222,7 +222,8 @@ class StressReductionChat:
                     st.session_state.chat_started = False
                     st.rerun()
             with header_col3:
-                feedback_url = "https://docs.google.com/spreadsheets/d/1ZRIkMOIKR4XoI5CbXtvbfAruFuSdxaKDwD41nrybd7c/edit?usp=sharing"
+                # Get the Google Sheets URL from secrets
+                feedback_url = st.secrets.connections.gsheets.spreadsheet
                 if st.button("Feedback", key="stress_feedback_button"):
                     webbrowser.open_new_tab(feedback_url)
             
